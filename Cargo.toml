@@ -1,0 +1,18 @@
+[package]
+name = "forge-flux"
+version = "0.1.0"
+edition = "2021"
+description = "Generalized input decomposition engine — decompose anything into tiles for agent transform pipelines"
+license = "MIT"
+repository = "https://github.com/SuperInstance/forge-flux"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+uuid = { version = "1", features = ["v4", "serde"] }
+
+[dev-dependencies]
+
+[features]
+default = []
+large-files = []
