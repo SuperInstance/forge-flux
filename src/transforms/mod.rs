@@ -54,8 +54,8 @@ impl Transform for SummarizeTransform {
         let target_count = ((tiles.len() as f64) * self.ratio).ceil() as usize;
         let target_count = target_count.max(1);
 
+        let chunk_size = tiles.len().div_ceil(target_count);
         let mut result = Vec::with_capacity(target_count);
-        let chunk_size = (tiles.len() + target_count - 1) / target_count;
 
         for (i, chunk) in tiles.chunks(chunk_size).enumerate() {
             let combined_payload: Vec<u8> = chunk
@@ -113,6 +113,7 @@ impl Transform for FilterTransform {
     }
 }
 
+#[allow(clippy::type_complexity)]
 /// Sort transform — reorders tiles using a comparator.
 pub struct SortTransform {
     compare: Box<dyn Fn(&Tile, &Tile) -> std::cmp::Ordering + Send + Sync>,
@@ -141,6 +142,7 @@ impl Transform for SortTransform {
 }
 
 /// Map transform — applies a function to each tile's payload.
+#[allow(clippy::type_complexity)]
 pub struct MapTransform {
     f: Box<dyn Fn(&Tile) -> Vec<u8> + Send + Sync>,
 }

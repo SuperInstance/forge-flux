@@ -50,7 +50,7 @@ impl Decomposer for TextDecomposer {
                 .filter(|s| !s.is_empty())
                 .collect(),
             TextSplitMode::Sentence => text
-                .split_inclusive(|c: char| c == '.' || c == '!' || c == '?')
+                .split_inclusive(|c: char| ['.', '!', '?'].contains(&c))
                 .map(|s| s.trim())
                 .filter(|s| !s.is_empty())
                 .collect(),
@@ -218,7 +218,7 @@ impl Decomposer for JsonDecomposer {
         TileKind::StructuredData
     }
 
-    fn decompose(&self, input: &[u8], meta: &HashMap<String, String>) -> Result<Vec<Tile>> {
+    fn decompose(&self, input: &[u8], _meta: &HashMap<String, String>) -> Result<Vec<Tile>> {
         let value: serde_json::Value = serde_json::from_slice(input).map_err(|e| {
             crate::ForgeError::DecompositionFailed(format!("invalid JSON: {e}"))
         })?;
@@ -311,7 +311,7 @@ fn parse_timestamp(ts: &str) -> Option<i64> {
     let h: i64 = parts[0].parse().ok()?;
     let m: i64 = parts[1].parse().ok()?;
     let sec_part = parts[2];
-    let sec_parts: Vec<&str> = sec_part.split(|c| c == ',' || c == '.').collect();
+    let sec_parts: Vec<&str> = sec_part.split(|c| ['.', ','].contains(&c)).collect();
     let s: i64 = sec_parts.first()?.parse().ok()?;
     let ms: i64 = if sec_parts.len() > 1 {
         let frac = sec_parts[1];
@@ -341,7 +341,7 @@ impl Decomposer for SubtitleDecomposer {
         let source = Uuid::new_v4();
         // Strip WEBVTT header if present
         let text = text.strip_prefix("WEBVTT").unwrap_or(text);
-        let text = text.trim_start_matches(|c: char| c == '\n' || c == '\r');
+        let text = text.trim_start_matches(|c: char| ['\n', '\r'].contains(&c));
 
         // Split by blank lines to get blocks
         let blocks: Vec<&str> = text

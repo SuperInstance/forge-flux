@@ -92,7 +92,7 @@ impl Assembler for CsvAssembler {
 
         // Header
         let header_cols: Vec<&str> = columns.iter().map(|c| c.strip_prefix("col_").unwrap_or(c)).collect();
-        output.push_str(&header_cols.iter().map(|s| *s).collect::<Vec<&str>>().join(&String::from(self.delimiter as char)));
+        output.push_str(&header_cols.to_vec().join(&String::from(self.delimiter as char)));
         output.push('\n');
 
         // Rows
@@ -231,6 +231,7 @@ impl Assembler for SubtitleAssembler {
 }
 
 /// Custom assembler using a user-provided function.
+#[allow(clippy::type_complexity)]
 pub struct CustomAssembler {
     f: Box<dyn Fn(&[Tile]) -> Result<Vec<u8>> + Send + Sync>,
 }
